@@ -27,7 +27,7 @@
             box-sizing: border-box;
         }
     
-        #joinBtn {
+        #joinBtn, #sendBtn, #startMicrophoneBtn {
             padding: 10px;
             background-color: #4caf50;
             color: #fff;
@@ -35,7 +35,11 @@
             border-radius: 5px;
             cursor: pointer;
         }
-    
+
+        #joinBtn, #sendBtn {
+            margin-right: 10px;
+        }
+
         .chat-container {
             max-width: 600px;
             margin: 20px auto;
@@ -80,15 +84,6 @@
             margin-right: 10px;
             box-sizing: border-box;
         }
-    
-        #sendBtn {
-            padding: 8px;
-            background-color: #4caf50;
-            color: #fff;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -103,6 +98,7 @@
         <div class="input-container">
             <input type="text" id="messageInput" placeholder="Type your message">
             <button id="sendBtn" onclick="sendmessage()">Send</button>
+            <button id="startMicrophoneBtn" onclick="startMicrophone()">Start Microphone</button>
         </div>
     </div>
 
@@ -117,6 +113,27 @@
             chatMessages.appendChild(newMessage);
         });
 
+        let peer;
+        function startMicrophone() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then((stream) => {
+                    // Send the stream to the server
+                    socket.emit("audio-stream", stream);
+
+                    // Create a WebRTC peer connection
+                    peer = new SimplePeer({ initiator: true, stream });
+
+                    // Handle WebRTC data events (if needed)
+                    peer.on('data', (data) => {
+                        // Handle data received from peer
+                        console.log('Data received:', data);
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error accessing microphone:', error);
+                });
+        }
+
         function joinRoom() {
             const roomInput = document.getElementById("roomInput").value;
             socket.emit("join-room", roomInput);
@@ -126,6 +143,10 @@
             const msg = document.getElementById("messageInput").value;
             const roomInput = document.getElementById("roomInput").value;
             socket.emit("user-message", { room: roomInput, message: msg });
+
+            if (peer) {
+                peer.send('Audio stream data or additional information');
+            }
         }
     </script>
 </body>
