@@ -103,52 +103,76 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-peer@10.1.0"></script>
-    <script>
-        const socket = new io();
-        socket.on("message", (message) => {
-            console.log(message);
-            var chatMessages = document.getElementById("chatMessages");
-            var newMessage = document.createElement("div");
-            newMessage.innerText = message;
-            chatMessages.appendChild(newMessage);
-        });
+    <!-- Add a new script tag for WebRTC -->
+<script src="https://cdn.jsdelivr.net/npm/simple-peer@10.1.0"></script>
 
-        let peer;
-        function startMicrophone() {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then((stream) => {
-                    // Send the stream to the server
-                    socket.emit("audio-stream", stream);
+<script>
+    const socket = new io();
+    let peer;
 
-                    // Create a WebRTC peer connection
-                    peer = new SimplePeer({ initiator: true, stream });
+    // Function to start microphone
+    function startMicrophone() {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then((stream) => {
+                // Send the stream to the server
+                socket.emit("audio-stream", stream);
 
-                    // Handle WebRTC data events (if needed)
-                    peer.on('data', (data) => {
-                        // Handle data received from peer
-                        console.log('Data received:', data);
-                    });
-                })
-                .catch((error) => {
-                    console.error('Error accessing microphone:', error);
+                // Create a WebRTC peer connection
+                peer = new SimplePeer({ initiator: true, stream });
+
+                // Handle WebRTC data events (if needed)
+                peer.on('data', (data) => {
+                    // Handle data received from peer
+                    console.log('Data received:', data);
                 });
+            })
+            .catch((error) => {
+                console.error('Error accessing microphone:', error);
+            });
+    }
+
+    // Modify the sendmessage function to include both text and audio streaming
+    function sendmessage() {
+        const msgInput = document.getElementById("messageInput").value;
+        const roomInput = document.getElementById("roomInput").value;
+
+        // Send text message
+        socket.emit("user-message", { room: roomInput, message: msgInput });
+
+        // Send audio stream (if the microphone is active)
+        if (peer) {
+            // You may need to serialize the audio stream before sending it, 
+            // depending on your application's requirements
+            const audioData = 'Audio stream data or additional information';
+            socket.emit("audio-message", { room: roomInput, audioData });
+        }
+    }
+
+    // Play audio when an audio message is received
+    socket.on("audio-message", (audioData) => {
+        playAudio(audioData);
+    });
+
+    // Function to play audio using the Web Audio API
+    function playAudio(audioData) {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = audioContext.createBuffer(1, audioData.length, audioContext.sampleRate);
+        const audioSource = audioContext.createBufferSource();
+
+        // Fill the audio buffer with the received audio data
+        const bufferData = audioBuffer.getChannelData(0);
+        for (let i = 0; i < audioData.length; i++) {
+            bufferData[i] = audioData[i];
         }
 
-        function joinRoom() {
-            const roomInput = document.getElementById("roomInput").value;
-            socket.emit("join-room", roomInput);
-        }
+        // Set the buffer as the source for the audio source
+        audioSource.buffer = audioBuffer;
+        audioSource.connect(audioContext.destination);
 
-        function sendmessage() {
-            const msg = document.getElementById("messageInput").value;
-            const roomInput = document.getElementById("roomInput").value;
-            socket.emit("user-message", { room: roomInput, message: msg });
+        // Start playing the audio
+        audioSource.start();
+    }
+</script>
 
-            if (peer) {
-                peer.send('Audio stream data or additional information');
-            }
-        }
-    </script>
 </body>
 </html>
