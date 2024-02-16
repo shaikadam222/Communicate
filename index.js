@@ -14,9 +14,6 @@ io.on("connection",(socket) => {
         console.log(message)
     })
 })
-console.log("Current working directory:", process.cwd());
-console.log("__dirname:", __dirname);
-app.use(express.static(path.join(__dirname, "public")));
 app.get("/",(req,res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 })
