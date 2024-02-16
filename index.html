@@ -3,118 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatt application</title>
+    <title>Chat Application</title>
     <style>
         body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 0;
-          background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+    
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+    
+        #roomInput {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    
+        #joinBtn {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     
         .chat-container {
-          max-width: 600px;
-          margin: 20px auto;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          overflow: hidden;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
         }
     
         .chat-messages {
-          padding: 10px;
-          overflow-y: scroll;
-          height: 300px;
+            padding: 10px;
+            overflow-y: scroll;
+            height: 300px;
+            background-color: #fff;
         }
     
         .message {
-          margin-bottom: 10px;
+            margin-bottom: 10px;
         }
     
-        .user-message {
-          background-color: #e2f7cb;
-          border-radius: 5px;
-          padding: 8px;
-          display: inline-block;
-          max-width: 80%;
-        }
-    
-        .other-message {
-          background-color: #fff;
-          border-radius: 5px;
-          padding: 8px;
-          display: inline-block;
-          max-width: 80%;
+        .user-message, .other-message {
+            background-color: #e2f7cb;
+            border-radius: 5px;
+            padding: 8px;
+            display: inline-block;
+            max-width: 80%;
+            margin-bottom: 10px;
         }
     
         .input-container {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px;
-          background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #fff;
         }
     
-        .input-container input {
-          flex-grow: 1;
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 3px;
-          margin-right: 10px;
+        #messageInput {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-right: 10px;
+            box-sizing: border-box;
         }
     
-        .input-container button {
-          padding: 8px;
-          background-color: #4caf50;
-          color: #fff;
-          border: none;
-          border-radius: 3px;
-          cursor: pointer;
+        #sendBtn {
+            padding: 8px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
         }
-      </style>
+    </style>
 </head>
 <body>
     <h1>Chat Application</h1>
-    <br><br><br>
     
     <input type="text" id="roomInput" placeholder="Enter room name">
-
-    <button onclick="joinRoom()">Join Room</button>
+    <button id="joinBtn" onclick="joinRoom()">Join Room</button>
+    
     <div class="chat-container">
-        <div class="chat-messages" id="chatMessages">
-            
-         
-        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        
         <div class="input-container">
-          <input type="text" id="messageInput" placeholder="Type your message">
-          <button onclick="sendmessage()">Send</button>
+            <input type="text" id="messageInput" placeholder="Type your message">
+            <button id="sendBtn" onclick="sendmessage()">Send</button>
         </div>
-      </div>
+    </div>
 
-
-
-    <!-- <input type="text" id="msg">
-    <button onclick="sendmessage()">send</button>
-    <div id="res">
-
-    </div> -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = new io();
-        socket.on("message",(message) => {
-            console.log(message)
-            var x = document.getElementById("chatMessages");
-            var n = document.createElement("div");
-            n.innerText = message;
-            x.appendChild(n);
-        })
+        socket.on("message", (message) => {
+            console.log(message);
+            var chatMessages = document.getElementById("chatMessages");
+            var newMessage = document.createElement("div");
+            newMessage.innerText = message;
+            chatMessages.appendChild(newMessage);
+        });
+
         function joinRoom() {
-        const roomInput = document.getElementById("roomInput").value;
-        socket.emit("join-room", roomInput);
+            const roomInput = document.getElementById("roomInput").value;
+            socket.emit("join-room", roomInput);
         }
+
         function sendmessage() {
-            const  msg = document.getElementById("messageInput").value;  
-            const  roomInput = document.getElementById("roomInput").value;
-            socket.emit("user-message",{room: roomInput,message: msg});
+            const msg = document.getElementById("messageInput").value;
+            const roomInput = document.getElementById("roomInput").value;
+            socket.emit("user-message", { room: roomInput, message: msg });
         }
     </script>
 </body>
