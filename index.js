@@ -9,9 +9,22 @@ const io = new Server(server)
 
 //socket io
 io.on("connection",(socket) => {
-    socket.on("user-message",(message) => {
-        io.emit('message',message)
-        console.log(message)
+    console.log(`user connected: ${socket.id}`)
+
+    socket.on("join-room",(room) => {
+        socket.join(room);
+        console.log(`User ${socket.id} joined room ${room}`)
+    })
+
+
+    socket.on("user-message",(data) => {
+        const {room,message} = data;
+        io.to(room).emit('message',message)
+        console.log(`message from ${socket.id} in room ${room}: ${message}`)
+    });
+
+    socket.on("disconnect",() => {
+        console.log(`User disconnected: ${socket.id}`);
     })
 })
 app.get("/",(req,res) => {

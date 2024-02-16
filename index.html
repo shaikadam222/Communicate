@@ -77,6 +77,9 @@
     <button>create a new WS</button>
     <br><br><br>
     
+    <input type="text" id="roomInput" placeholder="Enter room name">
+
+    <button onclick="joinRoom()">Join Room</button>
     <div class="chat-container">
         <div class="chat-messages" id="chatMessages">
             
@@ -105,9 +108,14 @@
             n.innerText = message;
             x.appendChild(n);
         })
+        function joinRoom() {
+        const roomInput = document.getElementById("roomInput").value;
+        socket.emit("join-room", roomInput);
+        }
         function sendmessage() {
-            var  msg = document.getElementById("messageInput");  
-            socket.emit("user-message",msg.value);
+            const  msg = document.getElementById("messageInput").value;  
+            const  roomInput = document.getElementById("roomInput").value;
+            socket.emit("user-message",{room: roomInput,message: msg});
         }
     </script>
 </body>
