@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatt application</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f4f4f4;
+        }
+    
+        .chat-container {
+          max-width: 600px;
+          margin: 20px auto;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          overflow: hidden;
+        }
+    
+        .chat-messages {
+          padding: 10px;
+          overflow-y: scroll;
+          height: 300px;
+        }
+    
+        .message {
+          margin-bottom: 10px;
+        }
+    
+        .user-message {
+          background-color: #e2f7cb;
+          border-radius: 5px;
+          padding: 8px;
+          display: inline-block;
+          max-width: 80%;
+        }
+    
+        .other-message {
+          background-color: #fff;
+          border-radius: 5px;
+          padding: 8px;
+          display: inline-block;
+          max-width: 80%;
+        }
+    
+        .input-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+          background-color: #fff;
+        }
+    
+        .input-container input {
+          flex-grow: 1;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          margin-right: 10px;
+        }
+    
+        .input-container button {
+          padding: 8px;
+          background-color: #4caf50;
+          color: #fff;
+          border: none;
+          border-radius: 3px;
+          cursor: pointer;
+        }
+      </style>
+</head>
+<body>
+    <h1>Chat Application</h1>
+    <button>create a new WS</button>
+    <br><br><br>
+    
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            
+         
+        </div>
+        <div class="input-container">
+          <input type="text" id="messageInput" placeholder="Type your message">
+          <button onclick="sendmessage()">Send</button>
+        </div>
+      </div>
+
+
+
+    <!-- <input type="text" id="msg">
+    <button onclick="sendmessage()">send</button>
+    <div id="res">
+
+    </div> -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = new io();
+        socket.on("message",(message) => {
+            console.log(message)
+            var x = document.getElementById("chatMessages");
+            var n = document.createElement("div");
+            n.innerText = message;
+            x.appendChild(n);
+        })
+        function sendmessage() {
+            var  msg = document.getElementById("messageInput");  
+            socket.emit("user-message",msg.value);
+        }
+    </script>
+</body>
+</html>
