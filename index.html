@@ -4,87 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Application</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-    
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #333;
-        }
-    
-        #roomInput {
-            padding: 10px;
-            margin: 10px 0;
-            width: 80%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-    
-        #joinBtn, #sendBtn, #startMicrophoneBtn {
-            padding: 10px;
-            background-color: #4caf50;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #joinBtn, #sendBtn {
-            margin-right: 10px;
-        }
-
-        .chat-container {
-            max-width: 600px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-    
-        .chat-messages {
-            padding: 10px;
-            overflow-y: scroll;
-            height: 300px;
-            background-color: #fff;
-        }
-    
-        .message {
-            margin-bottom: 10px;
-        }
-    
-        .user-message, .other-message {
-            background-color: #e2f7cb;
-            border-radius: 5px;
-            padding: 8px;
-            display: inline-block;
-            max-width: 80%;
-            margin-bottom: 10px;
-        }
-    
-        .input-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #fff;
-        }
-    
-        #messageInput {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            margin-right: 10px;
-            box-sizing: border-box;
-        }
-    </style>
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
 </head>
 <body>
     <h1>Chat Application</h1>
@@ -97,80 +17,52 @@
         
         <div class="input-container">
             <input type="text" id="messageInput" placeholder="Type your message">
-            <button id="sendBtn" onclick="sendmessage()">Send</button>
+            <button id="sendBtn" onclick="sendMessage()">Send</button>
             <button id="startMicrophoneBtn" onclick="startMicrophone()">Start Microphone</button>
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let peer;
 
-<script>
-    const socket = new io();
-    let peer;
+        function joinRoom() {
+            const roomInput = document.getElementById("roomInput").value;
+            socket.emit("join-room", roomInput);
+        }
 
-    // Function to start microphone
-    function startMicrophone() {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then((stream) => {
-                // Send the stream to the server
-                socket.emit("audio-stream", stream);
+        function sendMessage() {
+            const msg = document.getElementById("messageInput").value;
+            const roomInput = document.getElementById("roomInput").value;
+            socket.emit("user-message", { room: roomInput, message: msg });
+        }
 
-                // Create a WebRTC peer connection
-                peer = new SimplePeer({ initiator: true, stream });
+        function startMicrophone() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then((stream) => {
+                    socket.emit("audio-stream", stream);
 
-                // Handle WebRTC data events (if needed)
-                peer.on('data', (data) => {
-                    // Handle data received from peer
-                    console.log('Data received:', data);
+                    peer = new SimplePeer({ initiator: true, stream });
+
+                    // Handle WebRTC data events (if needed)
+                    peer.on('data', (data) => {
+                        console.log('Data received:', data);
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error accessing microphone:', error);
                 });
-            })
-            .catch((error) => {
-                console.error('Error accessing microphone:', error);
-            });
-    }
-
-    // Modify the sendmessage function to include both text and audio streaming
-    function sendmessage() {
-        const msgInput = document.getElementById("messageInput").value;
-        const roomInput = document.getElementById("roomInput").value;
-
-        // Send text message
-        socket.emit("user-message", { room: roomInput, message: msgInput });
-
-        // Send audio stream (if the microphone is active)
-        if (peer) {
-            // You may need to serialize the audio stream before sending it, 
-            // depending on your application's requirements
-            const audioData = 'Audio stream data or additional information';
-            socket.emit("audio-message", { room: roomInput, audioData });
-        }
-    }
-
-    // Play audio when an audio message is received
-    socket.on("audio-message", (audioData) => {
-        playAudio(audioData);
-    });
-
-    // Function to play audio using the Web Audio API
-    function playAudio(audioData) {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffer = audioContext.createBuffer(1, audioData.length, audioContext.sampleRate);
-        const audioSource = audioContext.createBufferSource();
-
-        // Fill the audio buffer with the received audio data
-        const bufferData = audioBuffer.getChannelData(0);
-        for (let i = 0; i < audioData.length; i++) {
-            bufferData[i] = audioData[i];
         }
 
-        // Set the buffer as the source for the audio source
-        audioSource.buffer = audioBuffer;
-        audioSource.connect(audioContext.destination);
+        socket.on("message", (message) => {
+            const chatMessages = document.getElementById("chatMessages");
+            const newMessage = document.createElement("div");
+            newMessage.innerText = message;
+            chatMessages.appendChild(newMessage);
+        });
 
-        // Start playing the audio
-        audioSource.start();
-    }
-</script>
+        // Additional event listeners, handling audio streams, etc.
 
+    </script>
 </body>
 </html>
