@@ -92,6 +92,7 @@ h1 {
 function joinRoom() {
     const roomInput = document.getElementById("roomInput").value;
     socket.emit("join-room", roomInput);
+    console.log(roomInput);
 }
 
 function sendMessage() {

@@ -31,6 +31,10 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
 
+
+app.post('/signup',(req,res) => {
+    
+})
 server.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
