@@ -12,6 +12,7 @@ io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
     socket.on("join-room", (room) => {
+        io.emit("joined",room);
         socket.join(room);
         console.log(`User ${socket.id} joined room ${room}`);
     });
@@ -31,10 +32,6 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
 
-
-app.post('/signup',(req,res) => {
-    
-})
 server.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
