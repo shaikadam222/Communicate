@@ -1,65 +1,62 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-  }
+  font-family: Arial, sans-serif;
+  background-color: #1c1c1c;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
 
-  .chat-container {
-    max-width: 600px;
-    margin: 20px auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-  }
+h1 {
+  text-align: center;
+  color: #61dafb;
+}
 
-  .chat-messages {
-    padding: 10px;
-    overflow-y: scroll;
-    height: 300px;
-  }
+.chat-container {
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #333;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
 
-  .message {
-    margin-bottom: 10px;
-  }
+#roomInput,
+#messageInput {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background-color: #444;
+  color: #fff;
+}
 
-  .user-message {
-    background-color: #e2f7cb;
-    border-radius: 5px;
-    padding: 8px;
-    display: inline-block;
-    max-width: 80%;
-  }
+#joinBtn,
+#sendBtn {
+  background-color: #61dafb;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-  .other-message {
-    background-color: #fff;
-    border-radius: 5px;
-    padding: 8px;
-    display: inline-block;
-    max-width: 80%;
-  }
+#joinBtn:hover,
+#sendBtn:hover {
+  background-color: #4fa3d1;
+}
 
-  .input-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #fff;
-  }
+.chat-messages {
+  max-height: 300px;
+  overflow-y: auto;
+  border-bottom: 1px solid #555;
+  margin-bottom: 10px;
+}
 
-  .input-container input {
-    flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    margin-right: 10px;
-  }
+.input-container {
+  display: flex;
+}
 
-  .input-container button {
-    padding: 8px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
+.input-container button {
+  flex-shrink: 0;
+}
