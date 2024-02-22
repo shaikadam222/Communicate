@@ -6,7 +6,71 @@
     <title>Chat Application</title>
     <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
     <script src="client.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+  font-family: Arial, sans-serif;
+  background-color: #1c1c1c;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: #61dafb;
+}
+
+.chat-container {
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #333;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
+
+#roomInput,
+#messageInput {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background-color: #444;
+  color: #fff;
+}
+
+#joinBtn,
+#sendBtn {
+  background-color: #61dafb;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#joinBtn:hover,
+#sendBtn:hover {
+  background-color: #4fa3d1;
+}
+
+.chat-messages {
+  max-height: 300px;
+  overflow-y: auto;
+  border-bottom: 1px solid #555;
+  margin-bottom: 10px;
+}
+
+.input-container {
+  display: flex;
+}
+
+.input-container button {
+  flex-shrink: 0;
+}
+
+    </style>
 </head>
 <body>
     <h1>Chat Application</h1>
