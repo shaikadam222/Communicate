@@ -95,12 +95,11 @@ function joinRoom() {
     // console.log(roomInput);
 }
 
-function sendMessage() {
-    const msg = document.getElementById("messageInput").value;
-    const roomInput = document.getElementById("roomInput").value;
-    socket.emit("user-message", { room: roomInput, message: msg });
-}
-
+// function sendMessage() {
+//     const msg = document.getElementById("messageInput").value;
+//     const roomInput = document.getElementById("roomInput").value;
+//     socket.emit("user-message", { room: roomInput, message: msg });
+// }
 
 socket.on("message", (message) => {
     const chatMessages = document.getElementById("chatMessages");
