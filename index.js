@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
 
     socket.on("user-message", (data) => {
         const { room, message } = data;
+        io.to(room).emit("notify",)
         io.to(room).emit("message", message);
         console.log(`Message from ${socket.id} in room ${room}: ${message}`);
     });
